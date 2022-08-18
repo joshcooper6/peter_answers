@@ -1,25 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;700&family=Roboto+Mono:wght@100;200;300&display=swap');
+
+:root {
+  --main-font: 'Raleway';
+  --backup-font: 'Roboto Mono';
+}
+
 .App {
   text-align: center;
   margin: 0 auto;
+  font-family: var(--main-font);
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+button,
+.typebox {
+  border: 0;
+  border-radius: 10px;
 }
 
 button {
   padding: 1em;
-  border: 0;
-  border-radius: 10px;
-  background-color: rgba(222, 184, 135, 1);
+  background-color: pink;
   color: black;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--backup-font);
   font-size: 1em;
-  font-weight: thin;
-  text-transform: lowercase;
+  font-weight: 300;
+  text-transform: uppercase;
   margin: 1em;
+  letter-spacing: 1px;
+  width: 60vw;
+  max-width: 600px;
+}
+
+#buttonDiv {
+  display: flex;
+  flex-direction: row;
 }
 
 button:hover {
   /* box-shadow: 0 .5em .5em 0 black; */
   cursor: pointer;
-  font-weight: bold;
+  transform: scale(1.1);
+  transition: 1s ease;
 }
 
 .full_screen {
@@ -36,46 +60,44 @@ button:hover {
 
 .flex {
   display: flex;
-
   justify-content: center;
   align-items: center;
+}
+
+.typebox {
+  background-color: pink;
+  width: 80vw; 
+  max-width: 800px;
+  min-height: 120px;
+  overflow: auto;
+}
+
+.fadeAnimation {
+  opacity: 0;
+  animation: fadeIn 1s linear forwards;
+  animation-delay: 500ms;
 }
 
 .flex_col {
   flex-direction: column;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#title {
+  font-size: 3em;
+  opacity: 0;
+  animation: fadeIn 1s linear forwards;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@media screen and (min-width: 800px) {
+  #title {
+    font-size: 4em;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+    opacity: 0;
+  } to {
+    opacity: 1;
   }
 }

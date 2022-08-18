@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import './App.css';
-import { PROMPT, falseKeys, runTest, randomAnswer, allowedPunc, fixGrammar } from './data.js';
+import { PROMPT, falseKeys, runTest, randomAnswer, allowedPunc, fixGrammar, allowedPrompts } from './data.js';
+import ReactTyped from 'react-typed';
+
 
 function App() {
-
   const [displayInput, setDisplayInput] = useState('');
   const [processedInput, setProcessedInput] = useState('');
   const [cheatToggled, setCheatToggled] = useState(false);
@@ -11,7 +12,6 @@ function App() {
   const [ready, setReady] = useState(false);
   const buttonRef = useRef('');
   const newQBtnRef = useRef('');
-
   const lastCharac = (displayInput[displayInput.length - 1]);
   const puncVisible = allowedPunc.includes(lastCharac);
 
@@ -28,10 +28,7 @@ function App() {
   const cheat = (key) => {
     const returnLetters = () => {
       const min = displayInput.length;
-
-      if (min >= 0) {
-        return PROMPT[min]
-      };
+      if (min >= 0) { return PROMPT[min] };
     };
 
     const showFakePrompt = () => {
@@ -48,8 +45,10 @@ function App() {
 
     if (cheatToggled && index <= PROMPT.length - 1) {
       showFakePrompt();
-    } else if (cheatToggled && index === PROMPT.length - 2) {
+    } else if (cheatToggled && index === PROMPT.length - 2 ) {
       setDisplayInput((prev) => prev + key);
+    } else if (ready) {
+      setDisplayInput(prev => prev);
     } else {
       setDisplayInput((prev) => prev + key);
     };
@@ -58,13 +57,8 @@ function App() {
   const toggleCheat = () => { setCheatToggled(!cheatToggled) };
 
   const backspaceConditions = () => {
-
     setIndex((pre) => {
-      if (pre === 0) {
-        return 0
-      } else {
-        return pre - 1
-      }
+      if (pre === 0) { return 0 } else { return pre - 1 }
     });
 
     const deleteLastCharac = (setState) => {
@@ -74,16 +68,17 @@ function App() {
     if (cheatToggled) {
       deleteLastCharac(setDisplayInput);
       deleteLastCharac(setProcessedInput);
-    } else {
+    } else if (cheatToggled && ready) {
+      setDisplayInput(prev => prev);
+    } else if (ready === false) {
       deleteLastCharac(setDisplayInput);
     };
-
   };
 
   const enterConditions = () => {
     if (ready) {
       newQBtnRef.current.click();
-    } else if (ready === false && puncVisible) {
+    } else if ((ready === false && puncVisible) || (ready === false && displayInput.toLowerCase().includes(allowedPrompts[1].toLowerCase()))) {
       buttonRef.current.click();
     } else {
       newQBtnRef.current.click();
@@ -103,6 +98,10 @@ function App() {
         toggleCheat();
         break;
       }
+      case '^' : {
+        toggleCheat();
+        break;
+      }
       default: {
         if (falseKeys.includes(key)) {
           return false;
@@ -117,7 +116,6 @@ function App() {
 
   const greenInput = () => {
     const greenIfAccurate = { color: 'green' };
-    const allowedPrompts = [PROMPT, 'Joshua, please answer'];
     if (allowedPrompts.includes(displayInput)) { return greenIfAccurate };
   };
 
@@ -126,18 +124,23 @@ function App() {
   return (
     <div className="App full_screen flex flex_col no_select" tabIndex={0}>
 
-      <h1 value={displayInput} style={greenInput()}>{displayInput}</h1>
+      <h1 id="title">Joshua Answers</h1>
+
+      <div className="flex flex_col typebox fadeAnimation">
+        <h1 value={displayInput} style={greenInput()}>{displayInput.length === 0 ? <ReactTyped strings={['Start typing to ask a question...']} typeSpeed={50} /> : displayInput}</h1>
+      </div>
       
-      {ready === false && puncVisible && <>
-        <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
+      {(ready) && <>
+        {processedInput.length <= 1 ? <h1 className='flex flex_col typebox'><ReactTyped strings={[randomAnswer()]} typeSpeed={50} /></h1> : <h1 value={processedInput} className="flex flex_col typebox"><ReactTyped strings={['Thinking for a moment...', fixGrammar(processedInput)]} typeSpeed={50} backSpeed={10} /></h1>}
       </>}
 
-      {ready && <>
-        {processedInput.length <= 1 ? <h1>{randomAnswer()}</h1> : <h1 value={processedInput}>{fixGrammar(processedInput)}</h1>}
-      </>}
-
-      <button ref={newQBtnRef} onClick={restart}>New Question</button>
-
+      <div id="buttonDiv" className="flex">
+        {(ready === false && puncVisible) || (ready === false && displayInput.toLowerCase().includes(allowedPrompts[1].toLowerCase())) ? <>
+          <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
+        </> : <>
+          {displayInput.length > 0 && <button ref={newQBtnRef} onClick={restart}>New Question</button>}
+        </>}
+      </div>
     </div>
   );
 }

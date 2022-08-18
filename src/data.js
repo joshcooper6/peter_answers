@@ -1,4 +1,6 @@
-export const PROMPT = 'Joshua, please answer the following question: '
+export const allowedPrompts = ['Joshua, please answer the following question: ', 'Joshua, please answer', 'Joshua, please answer the following'];
+
+export const PROMPT = allowedPrompts[0];
 
 export const fixGrammar = (string) => {
   let firstLetter = string[0].toUpperCase();
@@ -10,6 +12,9 @@ export const fixGrammar = (string) => {
 
 export const falseKeys = [
     'Shift',
+    'CapsLock',
+    'Command',
+    'Escape',
     'Meta',
     'Control',
     'Alt',
@@ -35,11 +40,14 @@ export const falseKeys = [
 
   export const answers = [
     'What do you mean?',
+    `I'm sorry, could you try asking again?`,
     'I have no idea.',
     'Are you really that stupid to ask me such a question?',
     'I am confusion.',
     `You really think I'm psychic or something?`,
-    `Umm... try asking again?`
+    `Umm... try asking again?`,
+    `To be honest, I'm not quite sure.`,
+    `I wish I knew the answer to that one.`
   ];
 
  export const randomAnswer = () => { 
@@ -47,4 +55,4 @@ export const falseKeys = [
     return answers[num];
   };
 
-  export const allowedPunc = ['?', '.']
+  export const allowedPunc = ['?', '.', ':', ";"]
