@@ -102,10 +102,10 @@ function App() {
 
   runTest(index, cheatToggled, ready, processedInput);
 
-  // const greenInput = () => {
-  //   const greenIfAccurate = { color: 'green' };
-  //   if (allowedPrompts.includes(displayInput)) { return greenIfAccurate };
-  // };
+  const greenInput = () => {
+    const greenIfAccurate = { color: 'green' };
+    if (allowedPrompts.includes(displayInput)) { return greenIfAccurate };
+  };
 
   document.onkeydown = (e) => { handleKeyChange(e.key) }
 
