@@ -1,15 +1,15 @@
 import { useRef, useState } from 'react';
 import './App.css';
-import { PROMPT, falseKeys, runTest, randomAnswer, allowedPunc, fixGrammar, allowedPrompts } from './data.js';
+import { PROMPT, falseKeys, runTest, randomAnswer, allowedPunc, fixGrammar, allowedPrompts, lowercase, isStringIncluded } from './data.js';
 import ReactTyped from 'react-typed';
-
 
 function App() {
   const [displayInput, setDisplayInput] = useState('');
   const [processedInput, setProcessedInput] = useState('');
   const [cheatToggled, setCheatToggled] = useState(false);
   const [index, setIndex] = useState(0);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(false);  
+  const [descShowing, setDescShowing] = useState(false);
   const buttonRef = useRef('');
   const newQBtnRef = useRef('');
   const lastCharac = (displayInput[displayInput.length - 1]);
@@ -26,25 +26,21 @@ function App() {
   };
 
   const cheat = (key) => {
-    const returnLetters = () => {
+    const promptLetters = () => {
       const min = displayInput.length;
       if (min >= 0) { return PROMPT[min] };
     };
 
-    const showFakePrompt = () => {
-      setIndex((pre) => {
-        if (index === PROMPT.length) {
-          return PROMPT.length
-        } else {
-          return pre + 1
-        }
-      });
-      setDisplayInput((prev) => prev + returnLetters());
+    const typePromptLetter = () => {
+      setIndex((pre) => { 
+        if (index === PROMPT.length) { return PROMPT.length } else { return pre + 1 }
+      }); 
+      setDisplayInput((prev) => prev + promptLetters());
       setProcessedInput((prev) => prev + key);
     }
 
     if (cheatToggled && index <= PROMPT.length - 1) {
-      showFakePrompt();
+      typePromptLetter();
     } else if (cheatToggled && index === PROMPT.length - 2 ) {
       setDisplayInput((prev) => prev + key);
     } else if (ready) {
@@ -57,13 +53,9 @@ function App() {
   const toggleCheat = () => { setCheatToggled(!cheatToggled) };
 
   const backspaceConditions = () => {
-    setIndex((pre) => {
-      if (pre === 0) { return 0 } else { return pre - 1 }
-    });
+    setIndex((pre) => { if (pre === 0) { return 0 } else { return pre - 1 } });
 
-    const deleteLastCharac = (setState) => {
-      setState(prev => prev.slice(0,-1));
-    };
+    const deleteLastCharac = (setState) => { setState(prev => prev.slice(0,-1)); };
 
     if (cheatToggled) {
       deleteLastCharac(setDisplayInput);
@@ -78,7 +70,7 @@ function App() {
   const enterConditions = () => {
     if (ready) {
       newQBtnRef.current.click();
-    } else if ((ready === false && puncVisible) || (ready === false && displayInput.toLowerCase().includes(allowedPrompts[1].toLowerCase()))) {
+    } else if ((ready === false && puncVisible) || (ready === false && isStringIncluded(displayInput, allowedPrompts[1]))) {
       buttonRef.current.click();
     } else {
       newQBtnRef.current.click();
@@ -94,11 +86,7 @@ function App() {
         enterConditions();
         break;
       }
-      case 'Control': {
-        toggleCheat();
-        break;
-      }
-      case '^' : {
+      case 'Control': case '^': {
         toggleCheat();
         break;
       }
@@ -121,26 +109,41 @@ function App() {
 
   document.onkeydown = (e) => { handleKeyChange(e.key) }
 
+
   return (
-    <div className="App full_screen flex flex_col no_select" tabIndex={0}>
+    <div className="App full_screen flex flex_col" tabIndex={0}>
 
       <h1 id="title">Joshua Answers</h1>
 
-      <div className="flex flex_col typebox fadeAnimation">
-        <h1 value={displayInput} style={greenInput()}>{displayInput.length === 0 ? <ReactTyped strings={['Start typing to ask a question...']} typeSpeed={50} /> : displayInput}</h1>
+      <div id="footer" className="flex flex_col" onClick={() => { setDescShowing(!descShowing); console.log(descShowing); }}>
+        <p>
+          {descShowing ? 'Hide The Hint' : 'How does this work?'} 
+        </p>
       </div>
-      
-      {(ready) && <>
-        {processedInput.length <= 1 ? <h1 className='flex flex_col typebox'><ReactTyped strings={[randomAnswer()]} typeSpeed={50} /></h1> : <h1 value={processedInput} className="flex flex_col typebox"><ReactTyped strings={['Thinking for a moment...', fixGrammar(processedInput)]} typeSpeed={50} backSpeed={10} /></h1>}
+
+      {descShowing ? <>
+        <div id="desc" className='flex flex_col typebox'>
+          <h2>Press 'Control' or '^' to activate the magic.</h2>
+          {cheatToggled ? <h2>Magic activated! <br /> Hide this hint and start typing.</h2> : '' }
+        </div>
+      </> : <>
+        <div className="flex flex_col typebox">
+          <h1 value={displayInput} style={greenInput()}>{displayInput.length === 0 ? <ReactTyped strings={['Start typing to ask a question...']} typeSpeed={50} /> : displayInput}</h1>
+        </div>
+        
+        {(ready) && <>
+          {processedInput.length <= 1 ? <h1 className='flex flex_col typebox'><ReactTyped strings={['Thinking...', randomAnswer()]} typeSpeed={50} /></h1> : <h1 value={processedInput} className="flex flex_col typebox"><ReactTyped strings={['Thinking...', fixGrammar(processedInput)]} typeSpeed={50} backSpeed={10} /></h1>}
+        </>}
+
+        <div id="buttonDiv" className="flex">
+          {(ready === false && puncVisible) || (ready === false && isStringIncluded(displayInput, allowedPrompts[1])) ? <>
+            <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
+          </> : <>
+            {displayInput.length > 0 && <button ref={newQBtnRef} onClick={restart}>New Question</button>}
+          </>}
+        </div>
       </>}
 
-      <div id="buttonDiv" className="flex">
-        {(ready === false && puncVisible) || (ready === false && displayInput.toLowerCase().includes(allowedPrompts[1].toLowerCase())) ? <>
-          <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
-        </> : <>
-          {displayInput.length > 0 && <button ref={newQBtnRef} onClick={restart}>New Question</button>}
-        </>}
-      </div>
     </div>
   );
 }

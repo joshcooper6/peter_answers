@@ -3,15 +3,16 @@
 :root {
   --main-font: 'Raleway';
   --backup-font: 'Roboto Mono';
+  --footer-opacity: .4;
 }
 
 .App {
   text-align: center;
   margin: 0 auto;
   font-family: var(--main-font);
-  -webkit-user-select: none; /* Safari */
+  -webkit-user-select: none; /* */
   -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  user-select: none;
 }
 
 button,
@@ -72,6 +73,10 @@ button:hover {
   overflow: auto;
 }
 
+.typebox h1 {
+  font-size: 1.5em;
+}
+
 .fadeAnimation {
   opacity: 0;
   animation: fadeIn 1s linear forwards;
@@ -88,15 +93,57 @@ button:hover {
   animation: fadeIn 1s linear forwards;
 }
 
+#footer {
+  bottom: 0;
+  position: fixed;
+  background-color: pink;
+  width: 100%;
+  height: 50px;
+  opacity: var(--footer-opacity);
+};
+
+#desc {
+  z-index: 100;
+}
+
+.bold {
+  font-weight: 800;
+}
+
+#footer:hover {
+  animation: footerFade 500ms linear forwards;
+  cursor: pointer;
+}
+
 @media screen and (min-width: 800px) {
   #title {
     font-size: 4em;
+  }
+  .typebox h1 {
+    font-size: 2em;
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
+  } to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes fadeInFooter {
+  from {
+    opacity: 0;
+  } to {
+    opacity: var(--footer-opacity);
+  }
+}
+
+@keyframes footerFade {
+  from {
+    opacity: var(--footer-opacity)
   } to {
     opacity: 1;
   }

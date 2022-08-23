@@ -10,6 +10,14 @@ export const fixGrammar = (string) => {
   return newString;
 };
 
+export const lowercase = (string) => {
+  return string.toLowerCase();
+};
+
+export const isStringIncluded = (string1, string2) => {
+  return lowercase(string1).includes(lowercase(string2))
+};
+
 export const falseKeys = [
     'Shift',
     'CapsLock',
