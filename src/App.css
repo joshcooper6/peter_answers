@@ -6,6 +6,7 @@
   --footer-opacity: .4;
 }
 
+
 .App {
   text-align: center;
   margin: 0 auto;
@@ -100,7 +101,13 @@ button:hover {
   width: 100%;
   height: 50px;
   opacity: var(--footer-opacity);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 };
+
+
 
 #desc {
   z-index: 100;

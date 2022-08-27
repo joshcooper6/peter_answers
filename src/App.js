@@ -2,6 +2,10 @@ import { useRef, useState } from 'react';
 import './App.css';
 import { PROMPT, falseKeys, runTest, randomAnswer, allowedPunc, fixGrammar, allowedPrompts, lowercase, isStringIncluded } from './data.js';
 import ReactTyped from 'react-typed';
+// import Modal from 'react-bootstrap/Modal';
+// import Button from 'react-bootstrap/Button';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   const [displayInput, setDisplayInput] = useState('');
@@ -109,6 +113,7 @@ function App() {
 
   document.onkeydown = (e) => { handleKeyChange(e.key) }
 
+  const handleClose = () => {setDescShowing(false)}
 
   return (
     <div className="App full_screen flex flex_col" tabIndex={0}>
@@ -120,6 +125,19 @@ function App() {
           {descShowing ? 'Hide The Hint' : 'How does this work?'} 
         </p>
       </div>
+
+      {/* <Modal show={descShowing} onClick={handleClose}>
+          <Modal.Header>
+            <Modal.Title>How does this work?</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Press the <b>Control</b> or <b>^</b> button 
+          to activate the prompt.</Modal.Body>
+          <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Close
+              </Button>
+            </Modal.Footer>
+      </Modal> */}
 
       {descShowing ? <>
         <div id="desc" className='flex flex_col typebox'>
@@ -143,6 +161,24 @@ function App() {
           </>}
         </div>
       </>}
+{/* 
+      <>
+        <div className="flex flex_col typebox">
+          <h1 value={displayInput} style={greenInput()}>{displayInput.length === 0 ? <ReactTyped strings={['Start typing to ask a question...']} typeSpeed={50} /> : displayInput}</h1>
+        </div>
+        
+        {(ready) && <>
+          {processedInput.length <= 1 ? <h1 className='flex flex_col typebox'><ReactTyped strings={['Thinking...', randomAnswer()]} typeSpeed={50} /></h1> : <h1 value={processedInput} className="flex flex_col typebox"><ReactTyped strings={['Thinking...', fixGrammar(processedInput)]} typeSpeed={50} backSpeed={10} /></h1>}
+        </>}
+
+        <div id="buttonDiv" className="flex">
+          {(ready === false && puncVisible) || (ready === false && isStringIncluded(displayInput, allowedPrompts[1])) ? <>
+            <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
+          </> : <>
+            {displayInput.length > 0 && <button ref={newQBtnRef} onClick={restart}>New Question</button>}
+          </>}
+        </div>
+      </> */}
 
     </div>
   );
