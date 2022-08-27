@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import './App.css';
 import { PROMPT, falseKeys, runTest, randomAnswer, allowedPunc, fixGrammar, allowedPrompts, lowercase, isStringIncluded } from './data.js';
 import ReactTyped from 'react-typed';
+import ModalContext from './ModalContext';
+import Button from 'react-bootstrap/Button';
 
 function App() {
   const [displayInput, setDisplayInput] = useState('');
@@ -14,6 +16,9 @@ function App() {
   const newQBtnRef = useRef('');
   const lastCharac = (displayInput[displayInput.length - 1]);
   const puncVisible = allowedPunc.includes(lastCharac);
+  const [show, setShow] = useState(false);
+
+  const handleShow = () => setShow(true);
 
   const restart = (e) => {
     let button = e.target;
@@ -111,40 +116,46 @@ function App() {
 
 
   return (
-    <div className="App full_screen flex flex_col" tabIndex={0}>
+    <ModalContext.Provider value={{show, setShow}}>
+      <div className="App full_screen flex flex_col" tabIndex={0}>
 
-      <h1 id="title">Joshua Answers</h1>
+        <h1 id="title">Joshua Answers</h1>
 
-      <div id="footer" className="flex flex_col" onClick={() => { setDescShowing(!descShowing); console.log(descShowing); }}>
-        <p>
-          {descShowing ? 'Hide The Hint' : 'How does this work?'} 
-        </p>
-      </div>
-
-      {descShowing ? <>
-        <div id="desc" className='flex flex_col typebox'>
-          <h2>Press 'Control' or '^' to activate the magic.</h2>
-          {cheatToggled ? <h2>Magic activated! <br /> Hide this hint and start typing.</h2> : '' }
+        <div id="footer" className="flex flex_col" onClick={() => { setDescShowing(!descShowing); console.log(descShowing); }}>
+          <p>
+            {descShowing ? 'Hide The Hint' : 'How does this work?'} 
+          </p>
         </div>
-      </> : <>
-        <div className="flex flex_col typebox">
-          <h1 value={displayInput} style={greenInput()}>{displayInput.length === 0 ? <ReactTyped strings={['Start typing to ask a question...']} typeSpeed={50} /> : displayInput}</h1>
-        </div>
-        
-        {(ready) && <>
-          {processedInput.length <= 1 ? <h1 className='flex flex_col typebox'><ReactTyped strings={['Thinking...', randomAnswer()]} typeSpeed={50} /></h1> : <h1 value={processedInput} className="flex flex_col typebox"><ReactTyped strings={['Thinking...', fixGrammar(processedInput)]} typeSpeed={50} backSpeed={10} /></h1>}
-        </>}
 
-        <div id="buttonDiv" className="flex">
-          {(ready === false && puncVisible) || (ready === false && isStringIncluded(displayInput, allowedPrompts[1])) ? <>
-            <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
-          </> : <>
-            {displayInput.length > 0 && <button ref={newQBtnRef} onClick={restart}>New Question</button>}
+        {descShowing ? <>
+          <div id="desc" className='flex flex_col typebox'>
+            <h2>Press 'Control' or '^' to activate the magic.</h2>
+            {cheatToggled ? <h2>Magic activated! <br /> Hide this hint and start typing.</h2> : '' }
+          </div>
+        </> : <>
+          <div className="flex flex_col typebox">
+            <h1 value={displayInput} style={greenInput()}>{displayInput.length === 0 ? <ReactTyped strings={['Start typing to ask a question...']} typeSpeed={50} /> : displayInput}</h1>
+          </div>
+          
+          {(ready) && <>
+            {processedInput.length <= 1 ? <h1 className='flex flex_col typebox'><ReactTyped strings={['Thinking...', randomAnswer()]} typeSpeed={50} /></h1> : <h1 value={processedInput} className="flex flex_col typebox"><ReactTyped strings={['Thinking...', fixGrammar(processedInput)]} typeSpeed={50} backSpeed={10} /></h1>}
           </>}
-        </div>
+
+          <div id="buttonDiv" className="flex">
+            {(ready === false && puncVisible) || (ready === false && isStringIncluded(displayInput, allowedPrompts[1])) ? <>
+              <button ref={buttonRef} onClick={() => setReady(!ready)}>Answer The Question</button>
+            </> : <>
+              {displayInput.length > 0 && <button ref={newQBtnRef} onClick={restart}>New Question</button>}
+            </>}
+          </div>
       </>}
 
+      {/* <Button variant="primary" onClick={handleShow}>
+        Launch demo modal
+      </Button> */}
+
     </div>
+    </ModalContext.Provider>
   );
 }
 
